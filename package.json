@@ -1,0 +1,9 @@
+{
+  "name": "CollegeScorecard",
+  "description": "Gets U.S. college information. Can look more into certain categories.",
+  "private": true,
+  "dependencies": {
+    "alexa-sdk": "latest",
+    "https": "latest"
+  }
+}
