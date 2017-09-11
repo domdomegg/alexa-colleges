@@ -37,9 +37,9 @@ const handlers = {
 
 		if (!college_name) {
 			let speech = [
-				'<say-as interpret-as="interjection">okey dokey</say-as> ',
-				'<say-as interpret-as="interjection">uh huh</say-as> ',
-				'<say-as interpret-as="interjection">you bet</say-as> ',
+				'<say-as interpret-as="interjection">okey dokey</say-as>. ',
+				'<say-as interpret-as="interjection">uh huh</say-as>. ',
+				'<say-as interpret-as="interjection">you bet</say-as>. ',
 				'Sure. '
 			][Math.floor(Math.random()*4)];
 
@@ -95,7 +95,7 @@ const handlers = {
 							speech = c(0) + ' had an acceptance rate of ' +
 								Math.round(c(1) * 1000) / 10 + '% in ' + DATA_YEAR + '. ' +
 								((c(3) && c(4) && c(5) && c(6) && c(7) && c(8) && c(9) && c(10)) ? (
-									((c(3) > 1250) ? '<say-as interpret-as="interjection">crikey</say-as>, ' : '') +
+									((c(3) > 1250 && this.event.request.locale == 'en-GB') ? '<say-as interpret-as="interjection">crikey</say-as>, ' : '') +
 									'The ' + c(2) + ' students at there in ' + DATA_YEAR + ' had a average SAT score of ' + c(3) +
 									' and an average cumulative ACT score of ' + c(4) + '. ' +
 									'Average SAT and ACT scores were as follows: ' +
@@ -103,6 +103,10 @@ const handlers = {
 									'. Writing: ' + c(7) + ', ' + c(8) +
 									'. SAT Critical reading ' + c(9) + ', and ACT English ' + c(10) + '. ') : '');
                             cardText = speech;
+
+							// Ensure acronyms read out as characters
+							speech = speech.replace(/([A-Z]{3})/g, '<say-as interpret-as="characters">$1</say-as>');
+
                             speech_followup = 'Would you like general, student or financial information for ' + c(0) + '?';
 							break;
 						case 'students':
@@ -154,7 +158,7 @@ const handlers = {
 		this.emit('LaunchRequest');
 	},
 	'AMAZON.CancelIntent': function() {
-		this.emit('StopIntent');
+		this.emit('AMAZON.StopIntent');
 	},
 	'AMAZON.StopIntent': function() {
 		// ~0.5% chance of making user consider if they are going insane
