@@ -9,13 +9,16 @@ const DATA_YEAR = helpers.DATA_YEAR;
 
 const handlers = {
 	'LaunchRequest': function() {
-		let speech = 'U.S. Universities can get you U.S. university statistics. It can also dive deeper into university admissions, students and financial data.';
+		let speech = 'U.S. Universities can get you U.S. university statistics. It can also dive deeper into university admissions, students and financial data. ';
 
 		if (this.event.request.locale == 'en-US') {
-			speech = 'College Scorecard can get you U.S. college information. It can also dive deeper into college admissions, students and financial data.';
+			speech = 'College Scorecard can get you college information. It can also dive deeper into college admissions, students and financial data. ';
 		}
 
-		this.emit(':tell', speech);
+		speech += 'What would you like to do?';
+		let followup = 'What would you like to do? As an example, you could ask to lookup Harvard University';
+
+		this.emit(':ask', speech, followup);
 	},
 	'LookupGeneral': function() {
 		this.emit('Lookup', 'general');
