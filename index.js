@@ -35,24 +35,33 @@ const handlers = {
 	'Lookup': function(fields = 'general') {
 		let college_name = this.event.request.intent.slots.college_name.value || this.attributes.college_name || null;
 
-		// Fix common test cases
-		if (college_name == 'MIT') {
-			college_name = 'Massachusetts Institute of Technology';
-		} else if (college_name == 'Caltech') {
-			college_name = 'California Institute of Technology';
-		}
-
 		if (!college_name) {
-			let speech = 'Sure. What university?';
-			let speech_followup = 'What university would you like information about?';
+			let speech = [
+				'<say-as interpret-as="interjection">okey dokey</say-as> ',
+				'<say-as interpret-as="interjection">uh huh</say-as> ',
+				'<say-as interpret-as="interjection">you bet</say-as> ',
+				'Sure. '
+			][Math.floor(Math.random()*4)];
+
+			let speech_followup;
 
 			if (this.event.request.locale == 'en-US') {
-				speech = 'Sure. What college?';
+				speech = 'What college?';
 				speech_followup = 'What college would you like information about?';
+			} else {
+				speech += 'What university?';
+				speech_followup = 'What U.S. university would you like information about?';
 			}
 
 			this.emit(':elicitSlot', 'college_name', speech, speech_followup);
 		} else {
+			// Catch common test cases
+			if (college_name == 'MIT') {
+				college_name = 'Massachusetts Institute of Technology';
+			} else if (college_name == 'Caltech') {
+				college_name = 'California Institute of Technology';
+			}
+
 			let url = 'https://api.data.gov/ed/collegescorecard/v1/schools?api_key=' + API_KEY + '&school.name=' + college_name + '&fields=' + helpers.FIELDS[fields].join();
 
 			helpers.getData(url, (college_data) => {
@@ -86,6 +95,7 @@ const handlers = {
 							speech = c(0) + ' had an acceptance rate of ' +
 								Math.round(c(1) * 1000) / 10 + '% in ' + DATA_YEAR + '. ' +
 								((c(3) && c(4) && c(5) && c(6) && c(7) && c(8) && c(9) && c(10)) ? (
+									((c(3) > 1250) ? '<say-as interpret-as="interjection">crikey</say-as>, ' : '') +
 									'The ' + c(2) + ' students at there in ' + DATA_YEAR + ' had a average SAT score of ' + c(3) +
 									' and an average cumulative ACT score of ' + c(4) + '. ' +
 									'Average SAT and ACT scores were as follows: ' +
@@ -144,10 +154,13 @@ const handlers = {
 		this.emit('LaunchRequest');
 	},
 	'AMAZON.CancelIntent': function() {
-		this.emit(':tell', 'Ok, Bye!');
+		this.emit('StopIntent');
 	},
 	'AMAZON.StopIntent': function() {
-		this.emit(':tell', 'Ok, Bye!');
+		// ~0.5% chance of making user consider if they are going insane
+		let speech = (Math.random() > 0.005 ? '<say-as interpret-as="interjection">cheerio</say-as>' : '<say-as interpret-as="interjection">bada bing bada boom</say-as> <say-as interpret-as="interjection">au revoir</say-as>');
+
+		this.emit(':tell', speech);
 	},
 	'Unhandled': function() {
 		this.emit(':ask', 'Sorry, I didn\'t get that. Please can you repeat it?', 'Sorry, what was that?');
