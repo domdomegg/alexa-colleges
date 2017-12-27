@@ -11,7 +11,3 @@ Available on the [UK](https://www.amazon.co.uk/dp/B0753K3Q1J/?tag=domdomegg-21) 
 ## License
 
 Code is MIT licensed
-
-## Disclaimer
-
-This is not an official UK parliament app, and does not having official authority of the House.
